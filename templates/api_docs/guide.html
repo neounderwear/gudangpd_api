@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title }}</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      header {
+        background-color: #f8f9fa;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+      }
+      h1 {
+        color: #007bff;
+      }
+      h2 {
+        color: #0056b3;
+        margin-top: 30px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #dee2e6;
+      }
+      h3 {
+        color: #0056b3;
+        margin-top: 20px;
+      }
+      pre {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        overflow-x: auto;
+        border-left: 4px solid #17a2b8;
+      }
+      code {
+        font-family: monospace;
+      }
+      .example {
+        margin: 20px 0;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        border-left: 4px solid #28a745;
+      }
+      .note {
+        margin: 20px 0;
+        padding: 15px;
+        background-color: #fff3cd;
+        border-left: 4px solid #ffc107;
+        border-radius: 5px;
+      }
+      .warning {
+        margin: 20px 0;
+        padding: 15px;
+        background-color: #f8d7da;
+        border-left: 4px solid #dc3545;
+        border-radius: 5px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid #dee2e6;
+      }
+      th {
+        background-color: #f8f9fa;
+        text-align: left;
+        padding: 10px;
+      }
+      td {
+        padding: 10px;
+      }
+      footer {
+        margin-top: 50px;
+        padding-top: 20px;
+        border-top: 1px solid #dee2e6;
+        text-align: center;
+        color: #6c757d;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>{{ title }}</h1>
+      <p>Complete guide for integrating with the Gudang Pakaian Dalam API</p>
+    </header>
+
+    <main>
+      <section>
+        <h2>Getting Started</h2>
+        <p>This guide provides detailed instructions on how to integrate with our Gudang Pakaian Dalam API. Before you begin, make sure you have the necessary credentials to authenticate your requests.</p>
+
+        <h3>Authentication</h3>
+        <p>The API supports two authentication methods:</p>
+
+        <h4>1. JWT Token Authentication</h4>
+        <p>For web and mobile applications, JWT (JSON Web Token) authentication is recommended. To obtain a JWT token, make a POST request to the login endpoint:</p>
+        <pre><code>
+POST /api/v1/auth/login/
+Content-Type: application/json
+
+{
+    "email": "your-email@example.com",
+    "password": "your-password"
+}
+            </code></pre>
+
+        <p>The response will include access and refresh tokens:</p>
+        <pre><code>
+{
+    "access": "eyJ0eXAiOiJKV...",
+    "refresh": "eyJ0eXAiOiJKV..."
+}
+            </code></pre>
+
+        <p>Use the access token in the Authorization header for subsequent requests:</p>
+        <pre><code>
+GET /api/v1/products/
+Authorization: Bearer eyJ0eXAiOiJKV...
+            </code></pre>
+
+        <div class="note"><strong>Note:</strong> Access tokens expire after 1 hour. Use the refresh token to get a new access token.</div>
+
+        <h4>2. API Key Authentication</h4>
+        <p>For server-to-server integration, API keys provide a simpler authentication method. To create an API key, first authenticate with JWT and then make a POST request:</p>
+        <pre><code>
+POST /api/v1/auth/api-keys/
+Authorization: Bearer eyJ0eXAiOiJKV...
+Content-Type: application/json
+
+{
+    "name": "My Integration Key"
+}
+            </code></pre>
+
+        <p>The response will include your API key:</p>
+        <pre><code>
+{
+    "id": 1,
+    "key": "abcdef123456789...",
+    "name": "My Integration Key",
+    "created_at": "2023-01-01T12:00:00Z",
+    "last_used_at": null,
+    "is_active": true
+}
+            </code></pre>
+
+        <p>Use the API key in the X-API-Key header for subsequent requests:</p>
+        <pre><code>
+GET /api/v1/products/
+X-API-Key: abcdef123456789...
+            </code></pre>
+
+        <div class="warning"><strong>Warning:</strong> Keep your API key secure. Do not share it in public repositories or client-side code.</div>
+      </section>
+
+      <section>
+        <h2>Common Use Cases</h2>
+
+        <h3>1. List and Search Products</h3>
+        <div class="example">
+          <h4>Request:</h4>
+          <pre><code>
+GET /api/v1/products/?search=keyword&category=1
+X-API-Key: your-api-key
+                </code></pre>
+
+          <h4>Response:</h4>
+          <pre><code>
+{
+    "count": 10,
+    "next": "http://example.com/api/v1/products/?page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "name": "Product Name",
+            "description": "Product Description",
+            "price": 100000,
+            ...
+        },
+        ...
+    ]
+}
+                </code></pre>
+        </div>
+
+        <h3>2. Create a New Order</h3>
+        <div class="example">
+          <h4>Request:</h4>
+          <pre><code>
+POST /api/v1/orders/
+X-API-Key: your-api-key
+Content-Type: application/json
+
+{
+    "shipping_name": "Customer Name",
+    "shipping_phone": "081234567890",
+    "shipping_address": "Customer Address",
+    "shipping_province": "Province",
+    "shipping_city": "City",
+    "shipping_postal_code": "12345",
+    "items": [
+        {
+            "product_variant": 1,
+            "quantity": 2
+        }
+    ]
+}
+                </code></pre>
+
+          <h4>Response:</h4>
+          <pre><code>
+{
+    "id": 1,
+    "user": 1,
+    "status": "pending",
+    "total_price": 200000,
+    "shipping_cost": 0,
+    "discount": 0,
+    "final_price": 200000,
+    ...
+}
+                </code></pre>
+        </div>
+
+        <h3>3. Calculate Shipping Cost</h3>
+        <div class="example">
+          <h4>Request:</h4>
+          <pre><code>
+POST /api/v1/calculate-shipping/
+X-API-Key: your-api-key
+Content-Type: application/json
+
+{
+    "origin_city": "501",
+    "destination_city": "114",
+    "weight": 1000,
+    "courier": "jne"
+}
+                </code></pre>
+
+          <h4>Response:</h4>
+          <pre><code>
+[
+    {
+        "courier": "JNE",
+        "service": "REG",
+        "description": "Layanan Reguler",
+        "cost": 15000,
+        "estimated_days": "2-3"
+    },
+    ...
+]
+                </code></pre>
+        </div>
+
+        <h3>4. Create Payment for Order</h3>
+        <div class="example">
+          <h4>Request:</h4>
+          <pre><code>
+POST /api/v1/orders/1/create-payment/
+X-API-Key: your-api-key
+                </code></pre>
+
+          <h4>Response:</h4>
+          <pre><code>
+{
+    "token": "midtrans-token",
+    "redirect_url": "https://app.sandbox.midtrans.com/snap/v2/vtweb/..."
+}
+                </code></pre>
+        </div>
+      </section>
+
+      <section>
+        <h2>Error Handling</h2>
+        <p>The API uses standard HTTP status codes to indicate the success or failure of a request. Here are some common status codes you may encounter:</p>
+
+        <table>
+          <tr>
+            <th>Status Code</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>200 OK</td>
+            <td>The request was successful</td>
+          </tr>
+          <tr>
+            <td>201 Created</td>
+            <td>A resource was successfully created</td>
+          </tr>
+          <tr>
+            <td>400 Bad Request</td>
+            <td>The request was invalid or could not be understood</td>
+          </tr>
+          <tr>
+            <td>401 Unauthorized</td>
+            <td>Authentication failed or credentials not provided</td>
+          </tr>
+          <tr>
+            <td>403 Forbidden</td>
+            <td>The authenticated user doesn't have permission</td>
+          </tr>
+          <tr>
+            <td>404 Not Found</td>
+            <td>The requested resource could not be found</td>
+          </tr>
+          <tr>
+            <td>500 Internal Server Error</td>
+            <td>An error occurred on the server</td>
+          </tr>
+        </table>
+
+        <p>Error responses include a detail message to help identify the issue:</p>
+        <pre><code>
+{
+    "detail": "Authentication credentials were not provided."
+}
+            </code></pre>
+      </section>
+
+      <section>
+        <h2>Rate Limiting</h2>
+        <p>To ensure fair usage of the API, rate limiting is enforced. The current limits are:</p>
+        <ul>
+          <li>Anonymous users: 100 requests per day</li>
+          <li>Authenticated users: 1000 requests per day</li>
+        </ul>
+        <p>If you exceed these limits, you'll receive a 429 Too Many Requests response. The response headers will include information about your current rate limit status.</p>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; {% now "Y" %} Gudang Pakaian Dalam API. All rights reserved.</p>
+      <p>
+        For technical support, please contact:
+        <a href="mailto:neounderwearshop@gmail.com">neounderwearshop@gmail.com</a>
+      </p>
+    </footer>
+  </body>
+</html>

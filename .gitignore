@@ -1,0 +1,28 @@
+# IDE
+.idea/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+api_requests.log
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database
+*.sqlite3
+
+# Collected static files (optional, jika menggunakan collectstatic)
+/static/
+
+# Media files
+/media/
+
+# Virtual environment (jika ada)
+venv/
+env/
+ENV/
