@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
 import uuid
+import os
 import requests
 import base64
 import logging
@@ -154,14 +155,14 @@ class CreatePaymentView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        server_key = getattr(settings, 'MIDTRANS_PROD_SERVER_KEY', '').strip()
+        server_key = getattr(settings, 'MIDTRANS_SERVER_KEY', '').strip()
         if not server_key:
             return Response(
                 {"detail": "Midtrans API key not configured"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
-        env = getattr(settings, 'MIDTRANS_PROD_ENV', 'sandbox')
+            
+        env = getattr(settings, 'MIDTRANS_ENV', 'production')
         api_url = "https://app.midtrans.com/snap/v1/transactions" \
             if env == 'production' else "https://app.sandbox.midtrans.com/snap/v1/transactions"
 

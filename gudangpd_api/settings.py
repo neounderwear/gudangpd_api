@@ -14,6 +14,10 @@ import os
 from pathlib import Path
 from decouple import config, Csv
 
+from dotenv import load_dotenv
+load_dotenv()
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # Allowed hosts
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="127.0.0.1,localhost",cast=Csv())
@@ -155,9 +159,10 @@ RAJAONGKIR_API_KEY = config('RAJAONGKIR_API_KEY')
 RAJAONGKIR_PACKAGE = config('RAJAONGKIR_PACKAGE')
 
 # Midtrans API settings (Sandbox)
-MIDTRANS_SERVER_KEY = config('MIDTRANS_SB_SERVER_KEY')
-MIDTRANS_CLIENT_KEY = config('MIDTRANS_SB_CLIENT_KEY')
-MIDTRANS_ENV = config('MIDTRANS_SB_ENV_', default='sandbox')
+import os
+MIDTRANS_SERVER_KEY = os.environ.get('MIDTRANS_PROD_SERVER_KEY')
+MIDTRANS_CLIENT_KEY = os.environ.get('MIDTRANS_PROD_CLIENT_KEY')
+MIDTRANS_ENV = os.environ.get('MIDTRANS_PROD_ENV', default='production')
 
 # Midtrans API settings (Production)
 # MIDTRANS_SERVER_KEY = config('MIDTRANS_PROD_SERVER_KEY')
